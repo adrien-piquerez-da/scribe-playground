@@ -1,0 +1,69 @@
+services:
+  postgres:
+    image: "postgres:17"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./postgres/postgres-entrypoint.sh:/postgres-entrypoint.sh
+    environment:
+      - POSTGRES_USER=canton-admin
+      - POSTGRES_PASSWORD=canton-admin
+      - POSTGRES_DB=postgres
+    ports:
+      - "5432:5432"
+    entrypoint: /postgres-entrypoint.sh
+    healthcheck:
+      test: "pg_isready -U canton-admin -d pqs"
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 60s
+    user: "postgres"
+    command:
+      - postgres
+      - -c
+      - max_connections=1000
+
+  canton:
+    image: europe-docker.pkg.dev/da-images/public-all/docker/canton-base:3.4.10
+    volumes:
+      - ./canton/health-check.sh:/app/health-check.sh
+      - ./canton/app.conf:/app/app.conf
+      - ./canton/bootstrap.canton:/app/bootstrap.sc
+    environment:
+      - LOG_LEVEL_CANTON=WARN
+    ports:
+      - "6865:6865"
+    healthcheck:
+      test: ["CMD", "bash", "/app/health-check.sh"]
+      interval: 20s
+      start_interval: 5s
+      timeout: 30s
+      retries: 10
+      start_period: 20s
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  scribe-pipeline:
+    image: europe-docker.pkg.dev/da-images/public/docker/scribe:3.4.1
+    working_dir: /daml3.4
+    environment:
+      - SCRIBE_SOURCE_LEDGER_HOST=canton
+      - SCRIBE_SOURCE_LEDGER_PORT=6865
+      - SCRIBE_TARGET_POSTGRES_HOST=postgres
+      - SCRIBE_TARGET_POSTGRES_PORT=5432
+      - SCRIBE_TARGET_POSTGRES_USERNAME=canton-admin
+      - SCRIBE_TARGET_POSTGRES_PASSWORD=canton-admin
+      - SCRIBE_TARGET_POSTGRES_DATABASE=pqs
+    command:
+      - "pipeline"
+      - "ledger"
+      - "postgres-document"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      canton:
+        condition: service_healthy
+
+volumes:
+  postgres:
