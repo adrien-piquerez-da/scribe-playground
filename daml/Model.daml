@@ -1,0 +1,64 @@
+module Model where
+
+import DA.Action
+import DA.Foldable
+
+data BlobView = BlobView { }
+
+interface Blob where viewtype BlobView
+
+template Seed
+  with owner: Party
+  where
+    signatory owner
+
+    nonconsuming choice CreateMany: ([ContractId Blob])
+      with
+        a: Int
+        b: Int
+        c: Int
+        d: Int
+      controller owner
+      do 
+        as <- replicateA a (fmap coerceContractId (create (BlobA owner)))
+        bs <- replicateA b (fmap coerceContractId (create (BlobB owner)))
+        cs <- replicateA c (fmap coerceContractId (create (BlobC owner)))
+        ds <- replicateA d (fmap coerceContractId (create (BlobD owner)))
+        return $ as ++ bs ++ cs ++ ds
+
+    nonconsuming choice ArchiveMany: ()
+      with contracts: [ContractId Blob]
+      controller owner
+      do mapA_ archive contracts
+
+template BlobA
+  with owner: Party
+  where
+    signatory owner
+
+    interface instance Blob for BlobA where
+      view = BlobView
+
+template BlobB
+  with owner: Party
+  where
+    signatory owner
+
+    interface instance Blob for BlobB where
+      view = BlobView
+
+template BlobC
+  with owner: Party
+  where
+    signatory owner
+
+    interface instance Blob for BlobC where
+      view = BlobView
+
+template BlobD
+  with owner: Party
+  where
+    signatory owner
+
+    interface instance Blob for BlobD where
+      view = BlobView
