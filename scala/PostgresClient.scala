@@ -1,14 +1,14 @@
 import java.sql.*
 
 @main def testScribe =
-  val postgres = PostgresClient()
+  val postgres = PostgresClient("pqs")
   println(postgres.countContracts())
   val query = postgres.prepareTestQuery("update __contracts set created_at_ix = 0 where created_at_ix < ?;")
   println(query.executeUpdate(45))
 
 object PostgresClient:
-  def apply(): PostgresClient =
-    val conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "canton-admin", "canton-admin")
+  def apply(database: String): PostgresClient =
+    val conn = DriverManager.getConnection(s"jdbc:postgresql://localhost:5432/$database", "canton-admin", "canton-admin")
     new PostgresClient(conn)
 
 class PostgresClient(conn: Connection):
