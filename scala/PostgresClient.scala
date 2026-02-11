@@ -19,6 +19,13 @@ class PostgresClient(conn: Connection):
     res.next()
     res.getInt(1)
 
+  private val getOffsetFromContractId = conn.prepareStatement("SELECT created_at_offset FROM creates() WHERE contract_id=?;")
+  def getOffset(contractId: String): Long =
+    getOffsetFromContractId.setString(1, contractId)
+    val res = getOffsetFromContractId.executeQuery()
+    res.next()
+    res.getLong(1)
+    
   private val getOffsetQuery = conn.prepareStatement("""SELECT "offset" FROM __transactions where ix=?;""")
   def getOffset(tx: Int): Int =
     getOffsetQuery.setInt(1, tx)
@@ -29,6 +36,13 @@ class PostgresClient(conn: Connection):
   private val countContractsQuery = conn.prepareStatement("SELECT COUNT(*) FROM __contracts")
   def countContracts(): Int =
     val res = countContractsQuery.executeQuery()
+    res.next()
+    res.getInt(1)
+
+  private val pruneQuery = conn.prepareStatement("SELECT deleted_contracts FROM prune_to_offset_selectively(?);")
+  def prune(offset: Long): Int =
+    pruneQuery.setLong(1, offset)
+    val res = pruneQuery.executeQuery()
     res.next()
     res.getInt(1)
 

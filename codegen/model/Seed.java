@@ -43,9 +43,9 @@ import java.util.Set;
 public final class Seed extends Template {
   public static final Identifier TEMPLATE_ID = new Identifier("#pkg", "Model", "Seed");
 
-  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("2653001783a8edf46ab6627c381b28104d8fe305cf950c1ed3a683065225e118", "Model", "Seed");
+  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b", "Model", "Seed");
 
-  public static final String PACKAGE_ID = "2653001783a8edf46ab6627c381b28104d8fe305cf950c1ed3a683065225e118";
+  public static final String PACKAGE_ID = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
 
   public static final String PACKAGE_NAME = "pkg";
 
@@ -54,21 +54,21 @@ public final class Seed extends Template {
   public static final Choice<Seed, Archive, Unit> CHOICE_Archive = 
       Choice.create("Archive", value$ -> value$.toValue(), value$ -> Archive.valueDecoder()
         .decode(value$), value$ -> PrimitiveValueDecoders.fromUnit.decode(value$),
-        new Archive.JsonDecoders().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
+        new Archive.JsonDecoder().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
         JsonLfEncoders::unit);
 
   public static final Choice<Seed, CreateMany, List<Blob.ContractId>> CHOICE_CreateMany = 
       Choice.create("CreateMany", value$ -> value$.toValue(), value$ -> CreateMany.valueDecoder()
         .decode(value$), value$ -> PrimitiveValueDecoders.fromList(v$0 ->
             new Blob.ContractId(v$0.asContractId().orElseThrow(() -> new IllegalArgumentException("Expected value$ to be of type com.daml.ledger.javaapi.data.ContractId")).getValue()))
-        .decode(value$), new CreateMany.JsonDecoders().get(),
+        .decode(value$), new CreateMany.JsonDecoder().get(),
         JsonLfDecoders.list(JsonLfDecoders.contractId(Blob.ContractId::new)),
         CreateMany::jsonEncoder, JsonLfEncoders.list(JsonLfEncoders::contractId));
 
   public static final Choice<Seed, ArchiveMany, Unit> CHOICE_ArchiveMany = 
       Choice.create("ArchiveMany", value$ -> value$.toValue(), value$ -> ArchiveMany.valueDecoder()
         .decode(value$), value$ -> PrimitiveValueDecoders.fromUnit.decode(value$),
-        new ArchiveMany.JsonDecoders().get(), JsonLfDecoders.unit, ArchiveMany::jsonEncoder,
+        new ArchiveMany.JsonDecoder().get(), JsonLfDecoders.unit, ArchiveMany::jsonEncoder,
         JsonLfEncoders::unit);
 
   public static final ContractCompanion.WithoutKey<Contract, ContractId, Seed> COMPANION = 
@@ -297,7 +297,7 @@ public final class Seed extends Template {
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoders {
+  public static class JsonDecoder {
     public JsonLfDecoder<Seed> get() {
       return jsonDecoder();
     }

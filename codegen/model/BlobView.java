@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class BlobView extends DamlRecord<BlobView> {
-  public static final String _packageId = "2653001783a8edf46ab6627c381b28104d8fe305cf950c1ed3a683065225e118";
+  public static final String _packageId = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
 
   public BlobView() {
   }
@@ -84,7 +84,7 @@ public class BlobView extends DamlRecord<BlobView> {
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoders {
+  public static class JsonDecoder {
     public JsonLfDecoder<BlobView> get() {
       return jsonDecoder();
     }

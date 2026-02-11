@@ -42,9 +42,9 @@ import java.util.Set;
 public final class BlobC extends Template {
   public static final Identifier TEMPLATE_ID = new Identifier("#pkg", "Model", "BlobC");
 
-  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("2653001783a8edf46ab6627c381b28104d8fe305cf950c1ed3a683065225e118", "Model", "BlobC");
+  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b", "Model", "BlobC");
 
-  public static final String PACKAGE_ID = "2653001783a8edf46ab6627c381b28104d8fe305cf950c1ed3a683065225e118";
+  public static final String PACKAGE_ID = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
 
   public static final String PACKAGE_NAME = "pkg";
 
@@ -53,7 +53,7 @@ public final class BlobC extends Template {
   public static final Choice<BlobC, Archive, Unit> CHOICE_Archive = 
       Choice.create("Archive", value$ -> value$.toValue(), value$ -> Archive.valueDecoder()
         .decode(value$), value$ -> PrimitiveValueDecoders.fromUnit.decode(value$),
-        new Archive.JsonDecoders().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
+        new Archive.JsonDecoder().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
         JsonLfEncoders::unit);
 
   public static final ContractCompanion.WithoutKey<Contract, ContractId, BlobC> COMPANION = 
@@ -243,7 +243,7 @@ public final class BlobC extends Template {
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoders {
+  public static class JsonDecoder {
     public JsonLfDecoder<BlobC> get() {
       return jsonDecoder();
     }

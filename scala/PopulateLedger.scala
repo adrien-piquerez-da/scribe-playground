@@ -17,7 +17,7 @@ object PopulateLedger:
   val random = Random()
 
   @main def populate_ledger: Unit =
-    val ledger = initLedger("localhost", 6865)
+    val (_, ledger) = initLedger("localhost", 6865)
     Listener(ledger.transactions()).start()
     Archivist(ledger).start()
     Creator(ledger).run()

@@ -32,9 +32,12 @@ import java.util as ju
 import java.util.Optional
 import java.util.UUID
 import scala.jdk.CollectionConverters.*
+import com.daml.ledger.api.v2.admin.ParticipantPruningServiceGrpc.ParticipantPruningServiceBlockingStub
+import com.daml.ledger.api.v2.admin.ParticipantPruningServiceGrpc
+import com.daml.ledger.api.v2.admin.ParticipantPruningServiceOuterClass.PruneRequest
 
 @main def test: Unit =
-  val ledger = initLedger("0.0.0.0", 6865)
+  val (_, ledger) = initLedger("0.0.0.0", 6865)
     val seed = ledger.submitAndWaitForTransaction(Seed.create(ledger.party)).getTransaction.getEvents.asScala
       .collectFirst { case e: CreatedEvent => Seed.ContractId(e.getContractId) }
       .get
@@ -44,17 +47,17 @@ import scala.jdk.CollectionConverters.*
     ledger.submitAndWaitForTransaction(seed.exerciseArchiveMany(blobs.asJava)).getTransaction.getEvents.asScala
       .foreach(println)
 
-def initLedger(host: String, port: Int): PartyLedger =
+def initLedger(host: String, port: Int): (LedgerAdmin, PartyLedger) =
   val admin = LedgerAdmin(host, port)
   val party = admin.listKnownParties.getPartyDetailsList().asScala.headOption.get.getParty
   val syncs = admin.getConnectedSynchronizersRequest(party).getConnectedSynchronizersList.asScala
-  val synchronizerId = syncs.find(_.getSynchronizerAlias == "mysynchronizer").get.getSynchronizerId
   val pkgs = admin.listVettedPackages.getVettedPackagesList.asScala.flatMap(_.getPackagesList.asScala)
   if pkgs.exists(_.getPackageName == "pkg") then println("ok")
   else
     println("uploading dar")
+    val synchronizerId = syncs.find(_.getSynchronizerAlias == "mysynchronizer").get.getSynchronizerId
     admin.uploadDar(Path.of(".daml/dist/pkg-1.0.0.dar"), synchronizerId)
-  PartyLedger(host, port, userId = "default", party = party)
+  (admin, PartyLedger(host, port, userId = "default", party = party))
   
 object LedgerAdmin:
   def apply(host: String, port: Int): LedgerAdmin =
@@ -64,6 +67,7 @@ object LedgerAdmin:
       PartyManagementServiceGrpc.newBlockingStub(channel),
       PackageManagementServiceGrpc.newBlockingStub(channel),
       PackageServiceGrpc.newBlockingStub(channel),
+      ParticipantPruningServiceGrpc.newBlockingStub(channel),
       StateServiceGrpc.newBlockingStub(channel)
     )
 
@@ -72,6 +76,7 @@ class LedgerAdmin(
   partyManagementService: PartyManagementServiceBlockingStub,
   packageManagementService: PackageManagementServiceBlockingStub,
   packageService: PackageServiceBlockingStub,
+  pruningService: ParticipantPruningServiceBlockingStub,
   stateService: StateServiceBlockingStub,
 ):
   def listKnownParties =
@@ -95,6 +100,10 @@ class LedgerAdmin(
     val bytes = ByteString.copyFrom(Files.readAllBytes(pkg))
     val request = UploadDarFileRequest.newBuilder().setDarFile(bytes).setSynchronizerId(synchronizerId).build()
     packageManagementService.uploadDarFile(request)
+
+  def prune(offset: Long): Unit =
+    val request = PruneRequest.newBuilder().setPruneUpTo(offset).build()
+    pruningService.prune(request)
 
 object PartyLedger:
   def apply(host: String, port: Int, userId: String, party: String): PartyLedger =

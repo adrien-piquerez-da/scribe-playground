@@ -62,3 +62,10 @@ template BlobD
 
     interface instance Blob for BlobD where
       view = BlobView
+
+
+template NamedBlob
+  with
+    name: Text
+    owner: Party
+  where signatory owner
