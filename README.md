@@ -6,6 +6,12 @@
 docker compose up
 ```
 
+* Build the daml package:
+
+```sh
+dpm build
+```
+
 * Start the `populate_ledger` script:
 
 ```sh
