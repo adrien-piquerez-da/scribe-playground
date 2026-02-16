@@ -1,4 +1,4 @@
-package model;
+package seed;
 
 import static com.daml.ledger.javaapi.data.codegen.json.JsonLfEncoders.apply;
 
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class CreateMany extends DamlRecord<CreateMany> {
-  public static final String _packageId = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
+  public static final String _packageId = "2e3386f68695579d46056ea8d2d28df24f3b1500f6fb1a484e4c1f884859b978";
 
   public final Long a;
 
@@ -109,13 +109,13 @@ public class CreateMany extends DamlRecord<CreateMany> {
 
   @Override
   public String toString() {
-    return String.format("model.CreateMany(%s, %s, %s, %s)", this.a, this.b, this.c, this.d);
+    return String.format("seed.CreateMany(%s, %s, %s, %s)", this.a, this.b, this.c, this.d);
   }
 
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoder {
+  public static class JsonDecoders {
     public JsonLfDecoder<CreateMany> get() {
       return jsonDecoder();
     }

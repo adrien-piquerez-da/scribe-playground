@@ -23,8 +23,8 @@ import com.daml.ledger.javaapi.data.codegen.*
 import com.daml.ledger.javaapi.data.{ContractId as _, Unit as _, *}
 import com.google.protobuf.ByteString
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder
-import model.Blob
-import model.Seed
+import seed.Blob
+import seed.Seed
 
 import java.nio.file.Files
 import java.nio.file.Path

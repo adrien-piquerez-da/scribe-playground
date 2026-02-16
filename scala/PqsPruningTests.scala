@@ -1,7 +1,7 @@
 import scala.jdk.CollectionConverters.*
 import com.daml.ledger.javaapi.data.CreatedEvent
 import scala.sys.process.Process
-import model.NamedBlob
+import seed.NamedBlob
 
 object PqsPruningTests:
   def init(): PqsPruningTests =

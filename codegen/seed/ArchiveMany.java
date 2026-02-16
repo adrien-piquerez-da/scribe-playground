@@ -1,4 +1,4 @@
-package model;
+package seed;
 
 import static com.daml.ledger.javaapi.data.codegen.json.JsonLfEncoders.apply;
 
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ArchiveMany extends DamlRecord<ArchiveMany> {
-  public static final String _packageId = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
+  public static final String _packageId = "2e3386f68695579d46056ea8d2d28df24f3b1500f6fb1a484e4c1f884859b978";
 
   public final List<Blob.ContractId> contracts;
 
@@ -51,7 +51,7 @@ public class ArchiveMany extends DamlRecord<ArchiveMany> {
   public static JsonLfDecoder<ArchiveMany> jsonDecoder() {
     return JsonLfDecoders.record(Arrays.asList("contracts"), name -> {
           switch (name) {
-            case "contracts": return com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders.JavaArg.at(0, com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders.list(com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders.contractId(model.Blob.ContractId::new)));
+            case "contracts": return com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders.JavaArg.at(0, com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders.list(com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders.contractId(seed.Blob.ContractId::new)));
             default: return null;
           }
         }
@@ -89,13 +89,13 @@ public class ArchiveMany extends DamlRecord<ArchiveMany> {
 
   @Override
   public String toString() {
-    return String.format("model.ArchiveMany(%s)", this.contracts);
+    return String.format("seed.ArchiveMany(%s)", this.contracts);
   }
 
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoder {
+  public static class JsonDecoders {
     public JsonLfDecoder<ArchiveMany> get() {
       return jsonDecoder();
     }

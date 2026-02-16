@@ -84,7 +84,7 @@ public class Archive extends DamlRecord<Archive> {
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoder {
+  public static class JsonDecoders {
     public JsonLfDecoder<Archive> get() {
       return jsonDecoder();
     }

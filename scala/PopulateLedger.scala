@@ -1,7 +1,7 @@
 
 import com.daml.ledger.javaapi.data.{ Unit as _, ContractId as _, * }
-import model.Blob
-import model.Seed
+import seed.Blob
+import seed.Seed
 
 import java.util as ju
 import scala.jdk.CollectionConverters.*

@@ -1,0 +1,7 @@
+module Foo where
+
+template Foo
+  with
+    name: Text
+    owner: Party
+  where signatory owner

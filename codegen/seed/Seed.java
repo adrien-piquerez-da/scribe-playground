@@ -1,4 +1,4 @@
-package model;
+package seed;
 
 import static com.daml.ledger.javaapi.data.codegen.json.JsonLfEncoders.apply;
 
@@ -41,39 +41,39 @@ import java.util.Objects;
 import java.util.Set;
 
 public final class Seed extends Template {
-  public static final Identifier TEMPLATE_ID = new Identifier("#pkg", "Model", "Seed");
+  public static final Identifier TEMPLATE_ID = new Identifier("#seed", "Seed", "Seed");
 
-  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b", "Model", "Seed");
+  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("2e3386f68695579d46056ea8d2d28df24f3b1500f6fb1a484e4c1f884859b978", "Seed", "Seed");
 
-  public static final String PACKAGE_ID = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
+  public static final String PACKAGE_ID = "2e3386f68695579d46056ea8d2d28df24f3b1500f6fb1a484e4c1f884859b978";
 
-  public static final String PACKAGE_NAME = "pkg";
+  public static final String PACKAGE_NAME = "seed";
 
   public static final PackageVersion PACKAGE_VERSION = new PackageVersion(new int[] {1, 0, 0});
 
   public static final Choice<Seed, Archive, Unit> CHOICE_Archive = 
       Choice.create("Archive", value$ -> value$.toValue(), value$ -> Archive.valueDecoder()
         .decode(value$), value$ -> PrimitiveValueDecoders.fromUnit.decode(value$),
-        new Archive.JsonDecoder().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
+        new Archive.JsonDecoders().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
         JsonLfEncoders::unit);
 
   public static final Choice<Seed, CreateMany, List<Blob.ContractId>> CHOICE_CreateMany = 
       Choice.create("CreateMany", value$ -> value$.toValue(), value$ -> CreateMany.valueDecoder()
         .decode(value$), value$ -> PrimitiveValueDecoders.fromList(v$0 ->
             new Blob.ContractId(v$0.asContractId().orElseThrow(() -> new IllegalArgumentException("Expected value$ to be of type com.daml.ledger.javaapi.data.ContractId")).getValue()))
-        .decode(value$), new CreateMany.JsonDecoder().get(),
+        .decode(value$), new CreateMany.JsonDecoders().get(),
         JsonLfDecoders.list(JsonLfDecoders.contractId(Blob.ContractId::new)),
         CreateMany::jsonEncoder, JsonLfEncoders.list(JsonLfEncoders::contractId));
 
   public static final Choice<Seed, ArchiveMany, Unit> CHOICE_ArchiveMany = 
       Choice.create("ArchiveMany", value$ -> value$.toValue(), value$ -> ArchiveMany.valueDecoder()
         .decode(value$), value$ -> PrimitiveValueDecoders.fromUnit.decode(value$),
-        new ArchiveMany.JsonDecoder().get(), JsonLfDecoders.unit, ArchiveMany::jsonEncoder,
+        new ArchiveMany.JsonDecoders().get(), JsonLfDecoders.unit, ArchiveMany::jsonEncoder,
         JsonLfEncoders::unit);
 
   public static final ContractCompanion.WithoutKey<Contract, ContractId, Seed> COMPANION = 
       new ContractCompanion.WithoutKey<>(new ContractTypeCompanion.Package(Seed.PACKAGE_ID, Seed.PACKAGE_NAME, Seed.PACKAGE_VERSION),
-        "model.Seed", TEMPLATE_ID, ContractId::new, v -> Seed.templateValueDecoder().decode(v),
+        "seed.Seed", TEMPLATE_ID, ContractId::new, v -> Seed.templateValueDecoder().decode(v),
         Seed::fromJson, Contract::new, List.of(CHOICE_Archive, CHOICE_CreateMany,
         CHOICE_ArchiveMany));
 
@@ -215,7 +215,7 @@ public final class Seed extends Template {
 
   @Override
   public String toString() {
-    return String.format("model.Seed(%s)", this.owner);
+    return String.format("seed.Seed(%s)", this.owner);
   }
 
   public static final class ContractId extends com.daml.ledger.javaapi.data.codegen.ContractId<Seed> implements Exercises<ExerciseCommand> {
@@ -297,7 +297,7 @@ public final class Seed extends Template {
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoder {
+  public static class JsonDecoders {
     public JsonLfDecoder<Seed> get() {
       return jsonDecoder();
     }

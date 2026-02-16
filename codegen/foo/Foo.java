@@ -1,4 +1,4 @@
-package model;
+package foo;
 
 import static com.daml.ledger.javaapi.data.codegen.json.JsonLfEncoders.apply;
 
@@ -40,41 +40,40 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public final class NamedBlob extends Template {
-  public static final Identifier TEMPLATE_ID = new Identifier("#pkg", "Model", "NamedBlob");
+public final class Foo extends Template {
+  public static final Identifier TEMPLATE_ID = new Identifier("#foo", "Foo", "Foo");
 
-  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b", "Model", "NamedBlob");
+  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("662f600f609e94d80dbb60bc843751edc0fba0173969e9e3ad930a2085ee95ff", "Foo", "Foo");
 
-  public static final String PACKAGE_ID = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
+  public static final String PACKAGE_ID = "662f600f609e94d80dbb60bc843751edc0fba0173969e9e3ad930a2085ee95ff";
 
-  public static final String PACKAGE_NAME = "pkg";
+  public static final String PACKAGE_NAME = "foo";
 
   public static final PackageVersion PACKAGE_VERSION = new PackageVersion(new int[] {1, 0, 0});
 
-  public static final Choice<NamedBlob, Archive, Unit> CHOICE_Archive = 
+  public static final Choice<Foo, Archive, Unit> CHOICE_Archive = 
       Choice.create("Archive", value$ -> value$.toValue(), value$ -> Archive.valueDecoder()
         .decode(value$), value$ -> PrimitiveValueDecoders.fromUnit.decode(value$),
-        new Archive.JsonDecoder().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
+        new Archive.JsonDecoders().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
         JsonLfEncoders::unit);
 
-  public static final ContractCompanion.WithoutKey<Contract, ContractId, NamedBlob> COMPANION = 
-      new ContractCompanion.WithoutKey<>(new ContractTypeCompanion.Package(NamedBlob.PACKAGE_ID, NamedBlob.PACKAGE_NAME, NamedBlob.PACKAGE_VERSION),
-        "model.NamedBlob", TEMPLATE_ID, ContractId::new,
-        v -> NamedBlob.templateValueDecoder().decode(v), NamedBlob::fromJson, Contract::new,
-        List.of(CHOICE_Archive));
+  public static final ContractCompanion.WithoutKey<Contract, ContractId, Foo> COMPANION = 
+      new ContractCompanion.WithoutKey<>(new ContractTypeCompanion.Package(Foo.PACKAGE_ID, Foo.PACKAGE_NAME, Foo.PACKAGE_VERSION),
+        "foo.Foo", TEMPLATE_ID, ContractId::new, v -> Foo.templateValueDecoder().decode(v),
+        Foo::fromJson, Contract::new, List.of(CHOICE_Archive));
 
   public final String name;
 
   public final String owner;
 
-  public NamedBlob(String name, String owner) {
+  public Foo(String name, String owner) {
     this.name = name;
     this.owner = owner;
   }
 
   @Override
   public Update<Created<ContractId>> create() {
-    return new Update.CreateUpdate<ContractId, Created<ContractId>>(new CreateCommand(NamedBlob.TEMPLATE_ID, this.toValue()), x -> x, ContractId::new);
+    return new Update.CreateUpdate<ContractId, Created<ContractId>>(new CreateCommand(Foo.TEMPLATE_ID, this.toValue()), x -> x, ContractId::new);
   }
 
   /**
@@ -94,7 +93,7 @@ public final class NamedBlob extends Template {
   }
 
   public static Update<Created<ContractId>> create(String name, String owner) {
-    return new NamedBlob(name, owner).create();
+    return new Foo(name, owner).create();
   }
 
   @Override
@@ -103,11 +102,11 @@ public final class NamedBlob extends Template {
   }
 
   @Override
-  protected ContractCompanion.WithoutKey<Contract, ContractId, NamedBlob> getCompanion() {
+  protected ContractCompanion.WithoutKey<Contract, ContractId, Foo> getCompanion() {
     return COMPANION;
   }
 
-  public static ValueDecoder<NamedBlob> valueDecoder() throws IllegalArgumentException {
+  public static ValueDecoder<Foo> valueDecoder() throws IllegalArgumentException {
     return ContractCompanion.valueDecoder(COMPANION);
   }
 
@@ -118,17 +117,17 @@ public final class NamedBlob extends Template {
     return new DamlRecord(fields);
   }
 
-  private static ValueDecoder<NamedBlob> templateValueDecoder() throws IllegalArgumentException {
+  private static ValueDecoder<Foo> templateValueDecoder() throws IllegalArgumentException {
     return value$ -> {
       Value recordValue$ = value$;
       List<DamlRecord.Field> fields$ = PrimitiveValueDecoders.recordCheck(2,0, recordValue$);
       String name = PrimitiveValueDecoders.fromText.decode(fields$.get(0).getValue());
       String owner = PrimitiveValueDecoders.fromParty.decode(fields$.get(1).getValue());
-      return new NamedBlob(name, owner);
+      return new Foo(name, owner);
     } ;
   }
 
-  public static JsonLfDecoder<NamedBlob> jsonDecoder() {
+  public static JsonLfDecoder<Foo> jsonDecoder() {
     return JsonLfDecoders.record(Arrays.asList("name", "owner"), name -> {
           switch (name) {
             case "name": return com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders.JavaArg.at(0, com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders.text);
@@ -136,10 +135,10 @@ public final class NamedBlob extends Template {
             default: return null;
           }
         }
-        , (Object[] args) -> new NamedBlob(JsonLfDecoders.cast(args[0]), JsonLfDecoders.cast(args[1])));
+        , (Object[] args) -> new Foo(JsonLfDecoders.cast(args[0]), JsonLfDecoders.cast(args[1])));
   }
 
-  public static NamedBlob fromJson(String json) throws JsonLfDecoder.Error {
+  public static Foo fromJson(String json) throws JsonLfDecoder.Error {
     return jsonDecoder().decode(new JsonLfReader(json));
   }
 
@@ -160,10 +159,10 @@ public final class NamedBlob extends Template {
     if (object == null) {
       return false;
     }
-    if (!(object instanceof NamedBlob)) {
+    if (!(object instanceof Foo)) {
       return false;
     }
-    NamedBlob other = (NamedBlob) object;
+    Foo other = (Foo) object;
     return Objects.equals(this.name, other.name) && Objects.equals(this.owner, other.owner);
   }
 
@@ -174,33 +173,33 @@ public final class NamedBlob extends Template {
 
   @Override
   public String toString() {
-    return String.format("model.NamedBlob(%s, %s)", this.name, this.owner);
+    return String.format("foo.Foo(%s, %s)", this.name, this.owner);
   }
 
-  public static final class ContractId extends com.daml.ledger.javaapi.data.codegen.ContractId<NamedBlob> implements Exercises<ExerciseCommand> {
+  public static final class ContractId extends com.daml.ledger.javaapi.data.codegen.ContractId<Foo> implements Exercises<ExerciseCommand> {
     public ContractId(String contractId) {
       super(contractId);
     }
 
     @Override
-    protected ContractTypeCompanion<? extends com.daml.ledger.javaapi.data.codegen.Contract<ContractId, ?>, ContractId, NamedBlob, ?> getCompanion(
+    protected ContractTypeCompanion<? extends com.daml.ledger.javaapi.data.codegen.Contract<ContractId, ?>, ContractId, Foo, ?> getCompanion(
         ) {
       return COMPANION;
     }
 
     public static ContractId fromContractId(
-        com.daml.ledger.javaapi.data.codegen.ContractId<NamedBlob> contractId) {
+        com.daml.ledger.javaapi.data.codegen.ContractId<Foo> contractId) {
       return COMPANION.toContractId(contractId);
     }
   }
 
-  public static class Contract extends com.daml.ledger.javaapi.data.codegen.Contract<ContractId, NamedBlob> {
-    public Contract(ContractId id, NamedBlob data, Set<String> signatories, Set<String> observers) {
+  public static class Contract extends com.daml.ledger.javaapi.data.codegen.Contract<ContractId, Foo> {
+    public Contract(ContractId id, Foo data, Set<String> signatories, Set<String> observers) {
       super(id, data, signatories, observers);
     }
 
     @Override
-    protected ContractCompanion<Contract, ContractId, NamedBlob> getCompanion() {
+    protected ContractCompanion<Contract, ContractId, Foo> getCompanion() {
       return COMPANION;
     }
 
@@ -230,7 +229,7 @@ public final class NamedBlob extends Template {
     }
 
     @Override
-    protected ContractTypeCompanion<? extends com.daml.ledger.javaapi.data.codegen.Contract<ContractId, ?>, ContractId, NamedBlob, ?> getCompanion(
+    protected ContractTypeCompanion<? extends com.daml.ledger.javaapi.data.codegen.Contract<ContractId, ?>, ContractId, Foo, ?> getCompanion(
         ) {
       return COMPANION;
     }
@@ -239,8 +238,8 @@ public final class NamedBlob extends Template {
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoder {
-    public JsonLfDecoder<NamedBlob> get() {
+  public static class JsonDecoders {
+    public JsonLfDecoder<Foo> get() {
       return jsonDecoder();
     }
   }

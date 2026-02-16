@@ -1,4 +1,4 @@
-module Model where
+module Seed where
 
 import DA.Action
 import DA.Foldable

@@ -1,0 +1,7 @@
+module Bar where
+
+template Bar
+  with
+    name: Text
+    owner: Party
+  where signatory owner

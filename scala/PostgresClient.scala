@@ -46,6 +46,11 @@ class PostgresClient(conn: Connection):
     res.next()
     res.getInt(1)
 
+  private val listContractNamesQuery = conn.prepareStatement("SELECT payload->'name' FROM creates();")
+  def listContractNames(): Seq[String] =
+    val res = listContractNamesQuery.executeQuery()
+    Iterator.unfold(res)(res => Option.when(res.next())(res.getString(1), res)).toSeq
+
   def prepareTestQuery(query: String): TestQuery = TestQuery(conn.prepareStatement("BEGIN;\n" + query + "\nROLLBACK;"))
 
 class TestQuery(stmt: PreparedStatement):

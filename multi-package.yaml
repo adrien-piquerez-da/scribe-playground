@@ -1,0 +1,4 @@
+packages:
+  - daml/seed
+  - daml/foo
+  - daml/bar

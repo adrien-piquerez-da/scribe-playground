@@ -1,0 +1,10 @@
+sdk-version: 3.4.9
+name: foo
+source: .
+version: 1.0.0
+dependencies:
+  - daml-prim
+  - daml-stdlib
+codegen:
+  java:
+    output-directory: ../../codegen

@@ -1,6 +1,6 @@
 sdk-version: 3.4.9
-name: pkg
-source: daml
+name: seed
+source: .
 version: 1.0.0
 dependencies:
   - daml-prim
@@ -9,4 +9,4 @@ build-options:
   - -Wno-upgrade-interfaces
 codegen:
   java:
-    output-directory: codegen
+    output-directory: ../../codegen
