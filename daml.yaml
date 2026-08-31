@@ -1,4 +1,4 @@
-sdk-version: 3.4.9
+sdk-version: 3.5.7
 name: pkg
 source: daml
 version: 1.0.0

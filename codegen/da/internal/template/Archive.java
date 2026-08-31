@@ -4,7 +4,9 @@ import static com.daml.ledger.javaapi.data.codegen.json.JsonLfEncoders.apply;
 
 import com.daml.ledger.javaapi.data.Value;
 import com.daml.ledger.javaapi.data.codegen.DamlRecord;
+import com.daml.ledger.javaapi.data.codegen.PreparedRecord;
 import com.daml.ledger.javaapi.data.codegen.PrimitiveValueDecoders;
+import com.daml.ledger.javaapi.data.codegen.UnknownTrailingFieldPolicy;
 import com.daml.ledger.javaapi.data.codegen.ValueDecoder;
 import com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoder;
 import com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders;
@@ -17,7 +19,6 @@ import java.lang.Override;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class Archive extends DamlRecord<Archive> {
@@ -27,12 +28,13 @@ public class Archive extends DamlRecord<Archive> {
   }
 
   public static ValueDecoder<Archive> valueDecoder() throws IllegalArgumentException {
-    return value$ -> {
+    return ValueDecoder.create((value$, policy$) -> {
       Value recordValue$ = value$;
-      List<com.daml.ledger.javaapi.data.DamlRecord.Field> fields$ = PrimitiveValueDecoders.recordCheck(0,0,
-          recordValue$);
+      PreparedRecord preparedRecord$ = PrimitiveValueDecoders.checkAndPrepareRecord(0,0,
+          recordValue$,  policy$);
+      java.util.List<com.daml.ledger.javaapi.data.DamlRecord.Field> fields$ = preparedRecord$.getExpectedFields();
       return new Archive();
-    } ;
+    });
   }
 
   public com.daml.ledger.javaapi.data.DamlRecord toValue() {
@@ -50,7 +52,12 @@ public class Archive extends DamlRecord<Archive> {
   }
 
   public static Archive fromJson(String json) throws JsonLfDecoder.Error {
-    return jsonDecoder().decode(new JsonLfReader(json));
+    return jsonDecoder().decode(new JsonLfReader(json), UnknownTrailingFieldPolicy.STRICT);
+  }
+
+  public static Archive fromJson(String json, UnknownTrailingFieldPolicy policy) throws
+      JsonLfDecoder.Error {
+    return jsonDecoder().decode(new JsonLfReader(json), policy);
   }
 
   public JsonLfEncoder jsonEncoder() {
@@ -84,7 +91,7 @@ public class Archive extends DamlRecord<Archive> {
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoder {
+  public static class JsonDecoders {
     public JsonLfDecoder<Archive> get() {
       return jsonDecoder();
     }
