@@ -24,7 +24,7 @@ services:
       - max_connections=1000
 
   canton:
-    image: europe-docker.pkg.dev/da-images/public-all/docker/canton-base:3.4.10
+    image: europe-docker.pkg.dev/da-images/public-all/docker/canton-base:3.5.14
     volumes:
       - ./canton/health-check.sh:/app/health-check.sh
       - ./canton/app.conf:/app/app.conf
@@ -45,8 +45,7 @@ services:
         condition: service_healthy
 
   scribe-pipeline:
-    image: europe-docker.pkg.dev/da-images/public/docker/scribe:3.4.1
-    working_dir: /daml3.4
+    image: europe-docker.pkg.dev/da-images/public/docker/scribe:3.5.5-debug
     environment:
       - SCRIBE_SOURCE_LEDGER_HOST=canton
       - SCRIBE_SOURCE_LEDGER_PORT=6865
@@ -65,5 +64,5 @@ services:
       canton:
         condition: service_healthy
 
-volumes:
-  postgres:
+# volumes:
+#   postgres:

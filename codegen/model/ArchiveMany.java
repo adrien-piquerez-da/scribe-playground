@@ -5,7 +5,9 @@ import static com.daml.ledger.javaapi.data.codegen.json.JsonLfEncoders.apply;
 import com.daml.ledger.javaapi.data.DamlCollectors;
 import com.daml.ledger.javaapi.data.Value;
 import com.daml.ledger.javaapi.data.codegen.DamlRecord;
+import com.daml.ledger.javaapi.data.codegen.PreparedRecord;
 import com.daml.ledger.javaapi.data.codegen.PrimitiveValueDecoders;
+import com.daml.ledger.javaapi.data.codegen.UnknownTrailingFieldPolicy;
 import com.daml.ledger.javaapi.data.codegen.ValueDecoder;
 import com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoder;
 import com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoders;
@@ -22,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ArchiveMany extends DamlRecord<ArchiveMany> {
-  public static final String _packageId = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
+  public static final String _packageId = "37555a1acf1d7776167b8803ea333d0c47c5c9cf07086db1b1124891d971e134";
 
   public final List<Blob.ContractId> contracts;
 
@@ -31,15 +33,16 @@ public class ArchiveMany extends DamlRecord<ArchiveMany> {
   }
 
   public static ValueDecoder<ArchiveMany> valueDecoder() throws IllegalArgumentException {
-    return value$ -> {
+    return ValueDecoder.create((value$, policy$) -> {
       Value recordValue$ = value$;
-      List<com.daml.ledger.javaapi.data.DamlRecord.Field> fields$ = PrimitiveValueDecoders.recordCheck(1,0,
-          recordValue$);
+      PreparedRecord preparedRecord$ = PrimitiveValueDecoders.checkAndPrepareRecord(1,0,
+          recordValue$,  policy$);
+      java.util.List<com.daml.ledger.javaapi.data.DamlRecord.Field> fields$ = preparedRecord$.getExpectedFields();
       List<Blob.ContractId> contracts = PrimitiveValueDecoders.fromList(v$0 ->
               new Blob.ContractId(v$0.asContractId().orElseThrow(() -> new IllegalArgumentException("Expected contracts to be of type com.daml.ledger.javaapi.data.ContractId")).getValue()))
-          .decode(fields$.get(0).getValue());
+          .decode(fields$.get(0).getValue(),policy$);
       return new ArchiveMany(contracts);
-    } ;
+    });
   }
 
   public com.daml.ledger.javaapi.data.DamlRecord toValue() {
@@ -59,7 +62,12 @@ public class ArchiveMany extends DamlRecord<ArchiveMany> {
   }
 
   public static ArchiveMany fromJson(String json) throws JsonLfDecoder.Error {
-    return jsonDecoder().decode(new JsonLfReader(json));
+    return jsonDecoder().decode(new JsonLfReader(json), UnknownTrailingFieldPolicy.STRICT);
+  }
+
+  public static ArchiveMany fromJson(String json, UnknownTrailingFieldPolicy policy) throws
+      JsonLfDecoder.Error {
+    return jsonDecoder().decode(new JsonLfReader(json), policy);
   }
 
   public JsonLfEncoder jsonEncoder() {
@@ -95,7 +103,7 @@ public class ArchiveMany extends DamlRecord<ArchiveMany> {
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoder {
+  public static class JsonDecoders {
     public JsonLfDecoder<ArchiveMany> get() {
       return jsonDecoder();
     }

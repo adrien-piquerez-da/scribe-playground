@@ -27,22 +27,21 @@ import java.util.List;
 public final class Blob {
   public static final Identifier TEMPLATE_ID = new Identifier("#pkg", "Model", "Blob");
 
-  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b", "Model", "Blob");
+  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("37555a1acf1d7776167b8803ea333d0c47c5c9cf07086db1b1124891d971e134", "Model", "Blob");
 
   public static final Identifier INTERFACE_ID = new Identifier("#pkg", "Model", "Blob");
 
-  public static final Identifier INTERFACE_ID_WITH_PACKAGE_ID = new Identifier("467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b", "Model", "Blob");
+  public static final Identifier INTERFACE_ID_WITH_PACKAGE_ID = new Identifier("37555a1acf1d7776167b8803ea333d0c47c5c9cf07086db1b1124891d971e134", "Model", "Blob");
 
-  public static final String PACKAGE_ID = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
+  public static final String PACKAGE_ID = "37555a1acf1d7776167b8803ea333d0c47c5c9cf07086db1b1124891d971e134";
 
   public static final String PACKAGE_NAME = "pkg";
 
   public static final PackageVersion PACKAGE_VERSION = new PackageVersion(new int[] {1, 0, 0});
 
   public static final Choice<Blob, Archive, Unit> CHOICE_Archive = 
-      Choice.create("Archive", value$ -> value$.toValue(), value$ -> Archive.valueDecoder()
-        .decode(value$), value$ -> PrimitiveValueDecoders.fromUnit.decode(value$),
-        new Archive.JsonDecoder().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
+      Choice.create("Archive", value$ -> value$.toValue(),Archive.valueDecoder(),PrimitiveValueDecoders.fromUnit,
+        new Archive.JsonDecoders().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
         JsonLfEncoders::unit);
 
   public static final INTERFACE_ INTERFACE = new INTERFACE_();

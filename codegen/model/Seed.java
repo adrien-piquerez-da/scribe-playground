@@ -19,7 +19,9 @@ import com.daml.ledger.javaapi.data.codegen.ContractCompanion;
 import com.daml.ledger.javaapi.data.codegen.ContractTypeCompanion;
 import com.daml.ledger.javaapi.data.codegen.Created;
 import com.daml.ledger.javaapi.data.codegen.Exercised;
+import com.daml.ledger.javaapi.data.codegen.PreparedRecord;
 import com.daml.ledger.javaapi.data.codegen.PrimitiveValueDecoders;
+import com.daml.ledger.javaapi.data.codegen.UnknownTrailingFieldPolicy;
 import com.daml.ledger.javaapi.data.codegen.Update;
 import com.daml.ledger.javaapi.data.codegen.ValueDecoder;
 import com.daml.ledger.javaapi.data.codegen.json.JsonLfDecoder;
@@ -28,7 +30,6 @@ import com.daml.ledger.javaapi.data.codegen.json.JsonLfEncoder;
 import com.daml.ledger.javaapi.data.codegen.json.JsonLfEncoders;
 import com.daml.ledger.javaapi.data.codegen.json.JsonLfReader;
 import da.internal.template.Archive;
-import java.lang.Deprecated;
 import java.lang.IllegalArgumentException;
 import java.lang.Long;
 import java.lang.Object;
@@ -43,39 +44,36 @@ import java.util.Set;
 public final class Seed extends Template {
   public static final Identifier TEMPLATE_ID = new Identifier("#pkg", "Model", "Seed");
 
-  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b", "Model", "Seed");
+  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("37555a1acf1d7776167b8803ea333d0c47c5c9cf07086db1b1124891d971e134", "Model", "Seed");
 
-  public static final String PACKAGE_ID = "467ab7672e755fd2c39e677860c486de75e26c1aa4b1949b1740e72891a2458b";
+  public static final String PACKAGE_ID = "37555a1acf1d7776167b8803ea333d0c47c5c9cf07086db1b1124891d971e134";
 
   public static final String PACKAGE_NAME = "pkg";
 
   public static final PackageVersion PACKAGE_VERSION = new PackageVersion(new int[] {1, 0, 0});
 
   public static final Choice<Seed, Archive, Unit> CHOICE_Archive = 
-      Choice.create("Archive", value$ -> value$.toValue(), value$ -> Archive.valueDecoder()
-        .decode(value$), value$ -> PrimitiveValueDecoders.fromUnit.decode(value$),
-        new Archive.JsonDecoder().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
+      Choice.create("Archive", value$ -> value$.toValue(),Archive.valueDecoder(),PrimitiveValueDecoders.fromUnit,
+        new Archive.JsonDecoders().get(), JsonLfDecoders.unit, Archive::jsonEncoder,
         JsonLfEncoders::unit);
 
   public static final Choice<Seed, CreateMany, List<Blob.ContractId>> CHOICE_CreateMany = 
-      Choice.create("CreateMany", value$ -> value$.toValue(), value$ -> CreateMany.valueDecoder()
-        .decode(value$), value$ -> PrimitiveValueDecoders.fromList(v$0 ->
-            new Blob.ContractId(v$0.asContractId().orElseThrow(() -> new IllegalArgumentException("Expected value$ to be of type com.daml.ledger.javaapi.data.ContractId")).getValue()))
-        .decode(value$), new CreateMany.JsonDecoder().get(),
+      Choice.create("CreateMany", value$ -> value$.toValue(),CreateMany.valueDecoder(),PrimitiveValueDecoders.fromList(
+          v$0 ->
+            new Blob.ContractId(v$0.asContractId().orElseThrow(() -> new IllegalArgumentException("Expected value$ to be of type com.daml.ledger.javaapi.data.ContractId")).getValue())),
+        new CreateMany.JsonDecoders().get(),
         JsonLfDecoders.list(JsonLfDecoders.contractId(Blob.ContractId::new)),
         CreateMany::jsonEncoder, JsonLfEncoders.list(JsonLfEncoders::contractId));
 
   public static final Choice<Seed, ArchiveMany, Unit> CHOICE_ArchiveMany = 
-      Choice.create("ArchiveMany", value$ -> value$.toValue(), value$ -> ArchiveMany.valueDecoder()
-        .decode(value$), value$ -> PrimitiveValueDecoders.fromUnit.decode(value$),
-        new ArchiveMany.JsonDecoder().get(), JsonLfDecoders.unit, ArchiveMany::jsonEncoder,
+      Choice.create("ArchiveMany", value$ -> value$.toValue(),ArchiveMany.valueDecoder(),PrimitiveValueDecoders.fromUnit,
+        new ArchiveMany.JsonDecoders().get(), JsonLfDecoders.unit, ArchiveMany::jsonEncoder,
         JsonLfEncoders::unit);
 
   public static final ContractCompanion.WithoutKey<Contract, ContractId, Seed> COMPANION = 
       new ContractCompanion.WithoutKey<>(new ContractTypeCompanion.Package(Seed.PACKAGE_ID, Seed.PACKAGE_NAME, Seed.PACKAGE_VERSION),
-        "model.Seed", TEMPLATE_ID, ContractId::new, v -> Seed.templateValueDecoder().decode(v),
-        Seed::fromJson, Contract::new, List.of(CHOICE_Archive, CHOICE_CreateMany,
-        CHOICE_ArchiveMany));
+        "model.Seed", TEMPLATE_ID, ContractId::new, Seed::fromJson, Contract::new,
+        List.of(CHOICE_Archive, CHOICE_CreateMany, CHOICE_ArchiveMany),Seed.templateValueDecoder());
 
   public final String owner;
 
@@ -86,55 +84,6 @@ public final class Seed extends Template {
   @Override
   public Update<Created<ContractId>> create() {
     return new Update.CreateUpdate<ContractId, Created<ContractId>>(new CreateCommand(Seed.TEMPLATE_ID, this.toValue()), x -> x, ContractId::new);
-  }
-
-  /**
-   * @deprecated since Daml 2.3.0; use {@code createAnd().exerciseArchive} instead
-   */
-  @Deprecated
-  public Update<Exercised<Unit>> createAndExerciseArchive(Archive arg) {
-    return createAnd().exerciseArchive(arg);
-  }
-
-  /**
-   * @deprecated since Daml 2.3.0; use {@code createAnd().exerciseArchive} instead
-   */
-  @Deprecated
-  public Update<Exercised<Unit>> createAndExerciseArchive() {
-    return createAndExerciseArchive(new Archive());
-  }
-
-  /**
-   * @deprecated since Daml 2.3.0; use {@code createAnd().exerciseCreateMany} instead
-   */
-  @Deprecated
-  public Update<Exercised<List<Blob.ContractId>>> createAndExerciseCreateMany(CreateMany arg) {
-    return createAnd().exerciseCreateMany(arg);
-  }
-
-  /**
-   * @deprecated since Daml 2.3.0; use {@code createAnd().exerciseCreateMany} instead
-   */
-  @Deprecated
-  public Update<Exercised<List<Blob.ContractId>>> createAndExerciseCreateMany(Long a, Long b,
-      Long c, Long d) {
-    return createAndExerciseCreateMany(new CreateMany(a, b, c, d));
-  }
-
-  /**
-   * @deprecated since Daml 2.3.0; use {@code createAnd().exerciseArchiveMany} instead
-   */
-  @Deprecated
-  public Update<Exercised<Unit>> createAndExerciseArchiveMany(ArchiveMany arg) {
-    return createAnd().exerciseArchiveMany(arg);
-  }
-
-  /**
-   * @deprecated since Daml 2.3.0; use {@code createAnd().exerciseArchiveMany} instead
-   */
-  @Deprecated
-  public Update<Exercised<Unit>> createAndExerciseArchiveMany(List<Blob.ContractId> contracts) {
-    return createAndExerciseArchiveMany(new ArchiveMany(contracts));
   }
 
   public static Update<Created<ContractId>> create(String owner) {
@@ -152,7 +101,21 @@ public final class Seed extends Template {
   }
 
   public static ValueDecoder<Seed> valueDecoder() throws IllegalArgumentException {
-    return ContractCompanion.valueDecoder(COMPANION);
+    final ValueDecoder<Seed> base = templateValueDecoder();
+    return new ValueDecoder<Seed>() {
+      @Override
+      public Seed decode(Value value, UnknownTrailingFieldPolicy policy) {
+        return base.decode(value, policy);
+      }
+      @Override
+      public Seed decode(Value value) {
+        return base.decode(value);
+      }
+      @Override
+      public com.daml.ledger.javaapi.data.codegen.ContractId<Seed> fromContractId(String contractId) {
+        return new ContractId(contractId);
+      }
+    };
   }
 
   public DamlRecord toValue() {
@@ -162,12 +125,14 @@ public final class Seed extends Template {
   }
 
   private static ValueDecoder<Seed> templateValueDecoder() throws IllegalArgumentException {
-    return value$ -> {
+    return ValueDecoder.create((value$, policy$) -> {
       Value recordValue$ = value$;
-      List<DamlRecord.Field> fields$ = PrimitiveValueDecoders.recordCheck(1,0, recordValue$);
-      String owner = PrimitiveValueDecoders.fromParty.decode(fields$.get(0).getValue());
+      PreparedRecord preparedRecord$ = PrimitiveValueDecoders.checkAndPrepareRecord(1,0,
+          recordValue$,  policy$);
+      java.util.List<DamlRecord.Field> fields$ = preparedRecord$.getExpectedFields();
+      String owner = PrimitiveValueDecoders.fromParty.decode(fields$.get(0).getValue(),policy$);
       return new Seed(owner);
-    } ;
+    });
   }
 
   public static JsonLfDecoder<Seed> jsonDecoder() {
@@ -181,7 +146,12 @@ public final class Seed extends Template {
   }
 
   public static Seed fromJson(String json) throws JsonLfDecoder.Error {
-    return jsonDecoder().decode(new JsonLfReader(json));
+    return jsonDecoder().decode(new JsonLfReader(json), UnknownTrailingFieldPolicy.STRICT);
+  }
+
+  public static Seed fromJson(String json, UnknownTrailingFieldPolicy policy) throws
+      JsonLfDecoder.Error {
+    return jsonDecoder().decode(new JsonLfReader(json), policy);
   }
 
   public JsonLfEncoder jsonEncoder() {
@@ -253,6 +223,10 @@ public final class Seed extends Template {
     public static Contract fromCreatedEvent(CreatedEvent event) {
       return COMPANION.fromCreatedEvent(event);
     }
+
+    public static Contract fromCreatedEvent(CreatedEvent event, UnknownTrailingFieldPolicy policy) {
+      return COMPANION.fromCreatedEvent(event, policy);
+    }
   }
 
   public interface Exercises<Cmd> extends com.daml.ledger.javaapi.data.codegen.Exercises.Archivable<Cmd> {
@@ -297,7 +271,7 @@ public final class Seed extends Template {
   /**
    * Proxies the jsonDecoder(...) static method, to provide an alternative calling synatx, which avoids some cases in generated code where javac gets confused
    */
-  public static class JsonDecoder {
+  public static class JsonDecoders {
     public JsonLfDecoder<Seed> get() {
       return jsonDecoder();
     }
