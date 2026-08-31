@@ -2,7 +2,7 @@ services:
   postgres:
     image: "postgres:17"
     volumes:
-      - postgres:/var/lib/postgresql/data
+      # - postgres:/var/lib/postgresql/data
       - ./postgres/postgres-entrypoint.sh:/postgres-entrypoint.sh
     environment:
       - POSTGRES_USER=canton-admin
@@ -61,8 +61,30 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-      canton:
-        condition: service_healthy
+      # canton:
+        # condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus:v3.4.1
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    depends_on:
+      - scribe-pipeline
+
+  grafana:
+    image: grafana/grafana:11.0.0
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboard.json:/var/lib/grafana/dashboards/dashboard.json
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    depends_on:
+      - prometheus
 
 # volumes:
 #   postgres:
