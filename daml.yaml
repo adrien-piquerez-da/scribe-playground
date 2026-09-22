@@ -1,5 +1,5 @@
 sdk-version: 3.5.7
-name: pkg
+name: pkg2
 source: daml
 version: 1.0.0
 dependencies:

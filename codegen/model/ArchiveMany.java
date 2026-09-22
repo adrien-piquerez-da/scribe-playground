@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class ArchiveMany extends DamlRecord<ArchiveMany> {
-  public static final String _packageId = "37555a1acf1d7776167b8803ea333d0c47c5c9cf07086db1b1124891d971e134";
+  public static final String _packageId = "9922a1da9495bff57659bc60acf007825c2899e8f708c315129a560f9669e616";
 
   public final List<Blob.ContractId> contracts;
 

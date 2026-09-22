@@ -19,8 +19,9 @@ import com.daml.ledger.api.v2.admin.PartyManagementServiceGrpc.PartyManagementSe
 import com.daml.ledger.api.v2.admin.PartyManagementServiceOuterClass.*
 import com.daml.ledger.api.v2.admin.UserManagementServiceGrpc
 import com.daml.ledger.api.v2.admin.UserManagementServiceGrpc.UserManagementServiceBlockingStub
+import com.daml.ledger.api.v2.admin.UserManagementServiceOuterClass.ListUsersRequest
 import com.daml.ledger.javaapi.data.codegen.*
-import com.daml.ledger.javaapi.data.{ContractId as _, Unit as _, *}
+import com.daml.ledger.javaapi.data.{ContractId as _, Unit as _, ListUsersRequest as _, *}
 import com.google.protobuf.ByteString
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder
 import model.Blob
@@ -41,7 +42,7 @@ import com.daml.ledger.api.v2.admin.ParticipantPruningServiceOuterClass.PruneReq
     val seed = ledger.submitAndWaitForTransaction(Seed.create(ledger.party)).getTransaction.getEvents.asScala
       .collectFirst { case e: CreatedEvent => Seed.ContractId(e.getContractId) }
       .get
-    val blobs = ledger.submitAndWaitForTransaction(seed.exerciseCreateMany(1,1,1,1)).getTransaction.getEvents.asScala
+    val blobs = ledger.submitAndWaitForTransaction(seed.exerciseCreateMany(1,1,1,1,1,1,1,1)).getTransaction.getEvents.asScala
       .collect { case e: CreatedEvent => Blob.ContractId(e.getContractId) }
       .toSeq
     ledger.submitAndWaitForTransaction(seed.exerciseArchiveMany(blobs.asJava)).getTransaction.getEvents.asScala
@@ -49,15 +50,19 @@ import com.daml.ledger.api.v2.admin.ParticipantPruningServiceOuterClass.PruneReq
 
 def initLedger(host: String, port: Int): (LedgerAdmin, PartyLedger) =
   val admin = LedgerAdmin(host, port)
-  val party = admin.listKnownParties.getPartyDetailsList().asScala.headOption.get.getParty
+  val userId = admin.listUsers.head
+  println(userId)
+  val partyId = UUID.randomUUID().toString
+  val party = admin.createParty(partyId, userId)
+  // admin.listKnownParties.getPartyDetailsList().asScala.headOption.get.getParty
   val syncs = admin.getConnectedSynchronizersRequest(party).getConnectedSynchronizersList.asScala
   val pkgs = admin.listVettedPackages.getVettedPackagesList.asScala.flatMap(_.getPackagesList.asScala)
-  if pkgs.exists(_.getPackageName == "pkg") then println("ok")
+  if pkgs.exists(_.getPackageName == "pkg2") then println("ok")
   else
     println("uploading dar")
     val synchronizerId = syncs.find(_.getSynchronizerAlias == "mysynchronizer").get.getSynchronizerId
-    admin.uploadDar(Path.of(".daml/dist/pkg-1.0.0.dar"), synchronizerId)
-  (admin, PartyLedger(host, port, userId = "default", party = party))
+    admin.uploadDar(Path.of(".daml/dist/pkg2-1.0.0.dar"), synchronizerId)
+  (admin, PartyLedger(host, port, userId, party = party))
   
 object LedgerAdmin:
   def apply(host: String, port: Int): LedgerAdmin =
@@ -79,6 +84,10 @@ class LedgerAdmin(
   pruningService: ParticipantPruningServiceBlockingStub,
   stateService: StateServiceBlockingStub,
 ):
+  def listUsers =
+    val request = ListUsersRequest.getDefaultInstance()
+    userManagementService.listUsers(request).getUsersList().asScala.map(_.getId)
+
   def listKnownParties =
     val request = ListKnownPartiesRequest.getDefaultInstance()
     partyManagementService.listKnownParties(request)

@@ -12,6 +12,16 @@ object PostgresClient:
     new PostgresClient(conn)
 
 class PostgresClient(conn: Connection):
+  private val listContractIdsQuery = conn.prepareStatement("SELECT DISTINCT(contract_id) FROM __contracts LIMIT ?;")
+  def listContractIds(limit: Int): Seq[String] =
+    listContractIdsQuery.setInt(1, limit)
+    val res = listContractIdsQuery.executeQuery()
+    val iterator = new Iterator[String]:
+      override def hasNext: Boolean = res.next
+      override def next(): String = res.getString(1)
+    iterator.toSeq
+  
+  
   private val getTransactionQuery = conn.prepareStatement("SELECT created_at_ix FROM __contracts ORDER BY created_at_ix ASC LIMIT 1 OFFSET ?;")
   def getTransaction(contracts: Int): Int =
     getTransactionQuery.setInt(1, contracts)
@@ -46,11 +56,24 @@ class PostgresClient(conn: Connection):
     res.next()
     res.getInt(1)
 
-  def prepareTestQuery(query: String): TestQuery = TestQuery(conn.prepareStatement("BEGIN;\n" + query + "\nROLLBACK;"))
+  def prepareTestQuery(query: String): TestQuery = TestQuery(
+    conn.prepareStatement("BEGIN;\n" + "SET work_mem = '512MB';\n" + query + "\nROLLBACK;")
+  )
 
 class TestQuery(stmt: PreparedStatement):
-  def executeSelect(tx: Int): Long =
-    stmt.setInt(1, tx)
+  def executeSelect(): Long =
+    val start = System.currentTimeMillis
+    stmt.execute()
+    System.currentTimeMillis - start
+  
+  def executeSelect(qname: Int): Long =
+    stmt.setInt(1, qname)
+    val start = System.currentTimeMillis
+    stmt.execute()
+    System.currentTimeMillis - start
+  
+  def executeSelect(qname: String): Long =
+    stmt.setString(1, qname)
     val start = System.currentTimeMillis
     stmt.execute()
     System.currentTimeMillis - start

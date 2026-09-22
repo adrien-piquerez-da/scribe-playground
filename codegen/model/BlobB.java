@@ -41,13 +41,13 @@ import java.util.Objects;
 import java.util.Set;
 
 public final class BlobB extends Template {
-  public static final Identifier TEMPLATE_ID = new Identifier("#pkg", "Model", "BlobB");
+  public static final Identifier TEMPLATE_ID = new Identifier("#pkg2", "Model", "BlobB");
 
-  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("37555a1acf1d7776167b8803ea333d0c47c5c9cf07086db1b1124891d971e134", "Model", "BlobB");
+  public static final Identifier TEMPLATE_ID_WITH_PACKAGE_ID = new Identifier("9922a1da9495bff57659bc60acf007825c2899e8f708c315129a560f9669e616", "Model", "BlobB");
 
-  public static final String PACKAGE_ID = "37555a1acf1d7776167b8803ea333d0c47c5c9cf07086db1b1124891d971e134";
+  public static final String PACKAGE_ID = "9922a1da9495bff57659bc60acf007825c2899e8f708c315129a560f9669e616";
 
-  public static final String PACKAGE_NAME = "pkg";
+  public static final String PACKAGE_NAME = "pkg2";
 
   public static final PackageVersion PACKAGE_VERSION = new PackageVersion(new int[] {1, 0, 0});
 

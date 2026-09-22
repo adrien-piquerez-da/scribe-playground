@@ -360,6 +360,10 @@
                },
                "fieldConfig": {
                   "defaults": {
+                     "color": {
+                        "fixedColor": "green",
+                        "mode": "fixed"
+                     },
                      "decimals": 0
                   }
                },

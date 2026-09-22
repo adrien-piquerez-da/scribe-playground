@@ -1,8 +1,11 @@
+name: pqs-playground
+
 services:
   postgres:
     image: "postgres:17"
+    shm_size: "1gb"
     volumes:
-      # - postgres:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
       - ./postgres/postgres-entrypoint.sh:/postgres-entrypoint.sh
     environment:
       - POSTGRES_USER=canton-admin
@@ -45,7 +48,7 @@ services:
         condition: service_healthy
 
   scribe-pipeline:
-    image: europe-docker.pkg.dev/da-images/public/docker/scribe:3.5.5-debug
+    image: europe-docker.pkg.dev/da-images/public-all/docker/participant-query-store:3.6.0-snapshot.20260901.1.114.v031db07-debug
     environment:
       - SCRIBE_SOURCE_LEDGER_HOST=canton
       - SCRIBE_SOURCE_LEDGER_PORT=6865
@@ -54,6 +57,7 @@ services:
       - SCRIBE_TARGET_POSTGRES_USERNAME=canton-admin
       - SCRIBE_TARGET_POSTGRES_PASSWORD=canton-admin
       - SCRIBE_TARGET_POSTGRES_DATABASE=pqs
+      - OTEL_EXPORTER_PROMETHEUS_HOST=0.0.0.0
     command:
       - "pipeline"
       - "ledger"
@@ -86,5 +90,5 @@ services:
     depends_on:
       - prometheus
 
-# volumes:
-#   postgres:
+volumes:
+  postgres:

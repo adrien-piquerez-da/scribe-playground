@@ -40,7 +40,7 @@ object PopulateLedger:
           .collect { case e: ArchivedEvent if e.getTemplateId.isBlob => Blob.ContractId(e.getContractId) }
           .toSeq
         getRandomBucket().updateAndGet(prev => random.shuffle(prev ++ creates))
-        val activeBlobs = activeBlobCounts.addAndGet(creates.size)
+        val activeBlobs = activeBlobCounts.addAndGet(creates.size - archives.size)
         val archivedBlobs = archivedBlobCounts.addAndGet(archives.size)
         count += 1
         if count % 200 == 0 then
@@ -55,7 +55,7 @@ object PopulateLedger:
         .collectFirst { case e: CreatedEvent => Seed.ContractId(e.getContractId) }
         .get
       while true do
-        ledger.submit(seed.exerciseCreateMany(random.nextLong(10), random.nextLong(8), random.nextLong(6), random.nextLong(4)))
+        ledger.submit(seed.exerciseCreateMany(random.nextLong(2), random.nextLong(4), random.nextLong(6), random.nextLong(8), random.nextLong(10), random.nextLong(12), random.nextLong(14), random.nextLong(16)))
         Thread.sleep(creationDelay)
 
   class Archivist(ledger: PartyLedger) extends Thread:
@@ -66,7 +66,7 @@ object PopulateLedger:
       while true do
         val activeBlobs = activeBlobCounts.get
         val archivedBlobs = archivedBlobCounts.get
-        val size = ((archivedBlobs + activeBlobs) / buckets.size - archivedBlobs).toInt
+        val size = ((archivedBlobs + activeBlobs) * 3 / 4 - archivedBlobs).toInt
         if size > 0 then
           val blobs = getRandomBucket().getAndUpdate(_.drop(size)).take(size)
           try 

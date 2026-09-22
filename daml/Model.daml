@@ -18,13 +18,21 @@ template Seed
         b: Int
         c: Int
         d: Int
+        e: Int
+        f: Int
+        g: Int
+        h: Int
       controller owner
       do 
         as <- replicateA a (fmap coerceContractId (create (BlobA owner)))
         bs <- replicateA b (fmap coerceContractId (create (BlobB owner)))
         cs <- replicateA c (fmap coerceContractId (create (BlobC owner)))
         ds <- replicateA d (fmap coerceContractId (create (BlobD owner)))
-        return $ as ++ bs ++ cs ++ ds
+        es <- replicateA e (fmap coerceContractId (create (BlobE owner)))
+        fs <- replicateA f (fmap coerceContractId (create (BlobF owner)))
+        gs <- replicateA g (fmap coerceContractId (create (BlobG owner)))
+        hs <- replicateA h (fmap coerceContractId (create (BlobH owner)))
+        return $ as ++ bs ++ cs ++ ds ++ es ++ fs ++ gs ++ hs
 
     nonconsuming choice ArchiveMany: ()
       with contracts: [ContractId Blob]
@@ -63,6 +71,38 @@ template BlobD
     interface instance Blob for BlobD where
       view = BlobView
 
+template BlobE
+  with owner: Party
+  where
+    signatory owner
+
+    interface instance Blob for BlobE where
+      view = BlobView
+
+
+template BlobF
+  with owner: Party
+  where
+    signatory owner
+
+    interface instance Blob for BlobF where
+      view = BlobView
+
+template BlobG
+  with owner: Party
+  where
+    signatory owner
+
+    interface instance Blob for BlobG where
+      view = BlobView
+
+template BlobH
+  with owner: Party
+  where
+    signatory owner
+
+    interface instance Blob for BlobH where
+      view = BlobView
 
 template NamedBlob
   with
